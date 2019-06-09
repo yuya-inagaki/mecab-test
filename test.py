@@ -10,6 +10,8 @@ import pandas as pd
 from bs4 import BeautifulSoup
 
 import MeCab
+import re
+from collections import Counter
 
 
 # main
@@ -36,10 +38,23 @@ if __name__ == '__main__':
     #print(lines)
 
     ##リストの空白要素以外をすべて文字列に戻す
-    text="\n".join(line for line in lines if line)
-    print(text)
+    data="".join(line for line in lines if line)
 
-    print("==================================")
 
-    m = MeCab.Tagger()
-    print(m.parse(text))
+    # パース
+    mecab = MeCab.Tagger()
+    parse = mecab.parse(data)
+    lines = parse.split('\n')
+    items = (re.split('[\t,]', line) for line in lines)
+
+
+    # 名詞をリストに格納
+    words = [item[0]
+             for item in items
+             if (item[0] not in ('EOS', '', 't', 'ー') and
+                 item[1] == '名詞' and item[2] == '一般')]
+
+    # 頻度順に出力
+    counter = Counter(words)
+    for word, count in counter.most_common():
+        print(f"{word}: {count}")
