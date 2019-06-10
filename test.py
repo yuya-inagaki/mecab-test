@@ -41,7 +41,6 @@ if __name__ == '__main__':
     ##リストの空白要素以外をすべて文字列に戻す
     data="".join(line for line in lines if line)
 
-
     # パース
     mecab = MeCab.Tagger()
     parse = mecab.parse(data)
